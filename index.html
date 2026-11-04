@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>רשימה, טאפל, מילון</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Secular+One&family=Assistant:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a Jupyter-style notebook — every exercise is a "cell" with an In[] label, grouped into three parts in teaching order */
+:root{
+  --paper:#f4f6fa; --surface:#ffffff; --ink:#15203a; --muted:#59637a; --line:#d8deea;
+  --accent:#2f5aa8; --accent-ink:#ffffff; --accent-soft:#e4ecfa;
+  --sun:#d9a50f; --sun-soft:#fbf0cc;
+  --ok:#1d7f53; --ok-soft:#e0f3e9; --bad:#b9420f; --bad-soft:#fce6da; --warn:#8a6a00;
+  --code-bg:#101a33; --code-fg:#e4eaf6; --t-k:#8fb2ff; --t-s:#f1cf68; --t-n:#f6a08c; --t-c:#7f8cab; --t-b:#7fd6c2;
+  --f-display:"Secular One","Assistant",system-ui,sans-serif;
+  --f-body:"Assistant",system-ui,"Segoe UI",Arial,sans-serif;
+  --f-code:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0d1322; --surface:#141c30; --ink:#e5e9f3; --muted:#97a1b8; --line:#28334d;
+  --accent:#7fa3ee; --accent-ink:#0d1322; --accent-soft:#1c2a48;
+  --sun:#f0c53a; --sun-soft:#3a3013;
+  --ok:#52c48d; --ok-soft:#11301f; --bad:#f08b5e; --bad-soft:#3a1c10; --warn:#e8c45a;
+  --code-bg:#091021; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0d1322; --surface:#141c30; --ink:#e5e9f3; --muted:#97a1b8; --line:#28334d;
+  --accent:#7fa3ee; --accent-ink:#0d1322; --accent-soft:#1c2a48;
+  --sun:#f0c53a; --sun-soft:#3a3013;
+  --ok:#52c48d; --ok-soft:#11301f; --bad:#f08b5e; --bad-soft:#3a1c10; --warn:#e8c45a;
+  --code-bg:#091021; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;direction:rtl}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;line-height:1.2;text-wrap:balance;margin:0}
+code,.mono{font-family:var(--f-code);font-size:.88em}
+p{margin:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding-block:10px}
+.bar .who{display:flex;gap:8px;flex:1 1 280px;min-width:0}
+.bar input{flex:1;min-width:0;font:inherit;font-size:15px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink)}
+.score{display:flex;align-items:center;gap:14px;font-size:14px;color:var(--muted)}
+.score b{font-family:var(--f-code);font-size:16px;color:var(--ink);font-variant-numeric:tabular-nums}
+.pbars{display:flex;gap:8px}
+.pbar{display:grid;gap:3px;font-size:12px;text-align:center;width:46px}
+.pbar i{display:block;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.pbar i span{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+
+/* hero */
+.hero{padding-block:40px 28px}
+.hero .eyebrow{font-size:14px;letter-spacing:.04em;color:var(--muted);font-weight:600}
+.hero h1{font-size:clamp(34px,6vw,54px);margin-top:6px}
+.hero h1 .k{color:var(--accent)}
+.hero h1 .sep{color:var(--sun)}
+.hero p.lead{max-width:62ch;margin-top:14px;color:var(--muted);font-size:18px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--accent-soft);color:var(--ink);border:1px solid var(--line)}
+.chip.sun{background:var(--sun-soft)}
+.teacher-note{margin-top:16px;padding:10px 14px;border-radius:8px;background:var(--sun-soft);border:1px solid var(--sun);font-size:15px}
+
+/* parts */
+.part{padding-block:30px 10px;border-top:2px solid var(--ink);margin-top:34px}
+.part-head{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+.part-head .num{font-family:var(--f-display);font-size:15px;color:var(--accent-ink);background:var(--accent);padding:2px 12px;border-radius:4px}
+.part-head h2{font-size:clamp(26px,4vw,36px)}
+.part-head .sub{color:var(--muted);flex-basis:100%;max-width:64ch}
+
+/* cells */
+.cell{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-top:22px;padding:18px 20px 20px;display:grid;gap:14px;min-width:0}
+.cell-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.cell-head .in{font-family:var(--f-code);font-size:13px;color:var(--accent);direction:ltr;unicode-bidi:isolate}
+.cell-head .kind{font-size:13px;font-weight:700;padding:1px 9px;border-radius:99px;background:var(--accent-soft)}
+.cell-head .kind.k-explore{background:var(--sun-soft)}
+.cell-head .kind.k-task{background:var(--ink);color:var(--surface)}
+.cell-head .done{margin-inline-start:auto;font-size:13px;font-weight:700;color:var(--ok)}
+.cell h3{font-size:22px;flex-basis:100%}
+.intro{color:var(--muted);max-width:68ch}
+.intro b{color:var(--ink)}
+
+pre.code{margin:0;background:var(--code-bg);color:var(--code-fg);font-family:var(--f-code);font-size:14.5px;line-height:1.55;padding:12px 14px;border-radius:8px;direction:ltr;text-align:left;overflow-x:auto;white-space:pre}
+pre.code.sm{padding:8px 12px;font-size:14px}
+.t-k{color:var(--t-k)}.t-s{color:var(--t-s)}.t-n{color:var(--t-n)}.t-c{color:var(--t-c);font-style:italic}.t-b{color:var(--t-b)}
+
+/* predict rows */
+.qrows{display:grid;gap:12px}
+.qrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:start}
+@media (max-width:640px){.qrow{grid-template-columns:minmax(0,1fr)}}
+.ans{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
+.ans input[type=text]{flex:1 1 160px;min-width:0;font-family:var(--f-code);font-size:14.5px;padding:8px 10px;border:1.5px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);direction:ltr;text-align:left}
+.ans input.ok,.tr input.ok,select.ok{border-color:var(--ok);background:var(--ok-soft)}
+.ans input.bad,.tr input.bad,select.bad{border-color:var(--bad);background:var(--bad-soft)}
+.btn{border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:15px;padding:6px 14px;border-radius:6px}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.small{font-size:14px;padding:4px 10px}
+.btn:disabled{opacity:.5;cursor:default}
+.fb{font-size:14.5px;font-weight:600;flex-basis:100%}
+.fb.ok{color:var(--ok)}.fb.bad{color:var(--bad)}.fb.warn{color:var(--warn)}
+.reveal{font-size:15px;background:var(--paper);border:1px dashed var(--line);border-radius:6px;padding:8px 12px}
+.reveal code{direction:ltr;unicode-bidi:isolate;background:var(--surface);padding:1px 5px;border-radius:4px}
+.linkbtn{background:none;border:0;color:var(--accent);text-decoration:underline;font-size:14px;padding:0}
+
+/* mc */
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border:1.5px solid var(--line);border-radius:8px;cursor:pointer;background:var(--paper)}
+.opt input{margin-top:6px;accent-color:var(--accent)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.opt .mono,.opt code{direction:ltr;unicode-bidi:isolate}
+.q{font-weight:700}
+
+/* trace */
+.tr-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table.tr{border-collapse:collapse;width:100%;min-width:520px;font-size:15px}
+.tr th{background:var(--accent-soft);font-weight:700;padding:8px;border-bottom:1px solid var(--line);text-align:center}
+.tr th code{direction:ltr;unicode-bidi:isolate}
+.tr td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:center;font-family:var(--f-code);font-size:14px;direction:ltr;font-variant-numeric:tabular-nums}
+.tr tr:last-child td{border-bottom:0}
+.tr td.fixed{color:var(--muted)}
+.tr input{width:100%;min-width:70px;font-family:var(--f-code);font-size:14px;padding:5px 7px;border:1.5px solid var(--line);border-radius:5px;background:var(--paper);color:var(--ink);text-align:center;direction:ltr}
+.subq{display:grid;gap:10px;border-top:1px dashed var(--line);padding-top:12px}
+
+/* editor */
+.ed{display:grid;gap:8px;min-width:0}
+.ed-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ed-bar .hint{font-size:13px;color:var(--muted);margin-inline-start:auto}
+textarea.editor{width:100%;font-family:var(--f-code);font-size:14.5px;line-height:1.55;background:var(--code-bg);color:var(--code-fg);border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;direction:ltr;text-align:left;resize:vertical;tab-size:4;white-space:pre;overflow-x:auto}
+pre.out{margin:0;font-family:var(--f-code);font-size:14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 14px;direction:ltr;text-align:left;white-space:pre-wrap;word-break:break-word;min-height:2.6em}
+pre.out::before{content:"Out:";display:block;font-size:12px;color:var(--muted)}
+pre.out .err{color:var(--bad)}
+.tests{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:15px}
+.tests li{display:flex;gap:8px;align-items:baseline}
+.tests li::before{content:"○";font-family:var(--f-code);color:var(--muted)}
+.tests li.pass::before{content:"✓";color:var(--ok);font-weight:700}
+.tests li.fail::before{content:"✗";color:var(--bad);font-weight:700}
+.tests code{direction:ltr;unicode-bidi:isolate}
+.task-body{max-width:68ch}
+.task-body ol{margin:6px 0 0;padding-inline-start:22px}
+.task-body code{direction:ltr;unicode-bidi:isolate;background:var(--accent-soft);padding:0 5px;border-radius:4px}
+
+/* concept */
+.concept{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:center}
+@media (max-width:640px){.concept{grid-template-columns:minmax(0,1fr)}}
+.bag{display:grid;gap:8px;direction:ltr;padding:14px;border:2px dashed var(--accent);border-radius:14px;background:var(--paper)}
+.pair{display:flex;align-items:center;gap:8px;font-family:var(--f-code);font-size:14px}
+.pair .key{background:var(--sun-soft);border:1.5px solid var(--sun);padding:3px 9px;border-radius:4px 14px 14px 4px}
+.pair .arrow{color:var(--muted)}
+.pair .val{background:var(--surface);border:1.5px solid var(--line);padding:3px 9px;border-radius:4px}
+.bag .cap{display:flex;justify-content:space-between;font-family:var(--f-body);font-size:13px;color:var(--muted)}
+.concept ul{margin:0;padding-inline-start:20px;display:grid;gap:6px}
+.concept code{direction:ltr;unicode-bidi:isolate;background:var(--accent-soft);padding:0 5px;border-radius:4px}
+
+/* chapter intros */
+.intro-cell{border-color:var(--accent);border-width:1.5px}
+.defn{font-size:19px;max-width:64ch}
+.defn b{color:var(--accent)}
+.idx{display:grid;grid-template-columns:auto repeat(5,minmax(58px,1fr));direction:ltr;font-family:var(--f-code);font-size:14px;text-align:center;min-width:420px}
+.idx span{padding:5px 4px}
+.idx .lab{font-family:var(--f-body);font-size:12px;color:var(--muted);text-align:right;padding-inline-end:10px;direction:rtl}
+.idx .pos{color:var(--accent);font-weight:600}
+.idx .neg{color:var(--bad);font-weight:600}
+.idx .v{background:var(--paper);border:1.5px solid var(--line);margin-inline-start:-1.5px}
+.idx.locked .v{border-style:dashed;border-color:var(--muted)}
+.terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.term{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.term dt{font-weight:700}
+.term dd{margin:2px 0 0;color:var(--muted);font-size:15px}
+.term code,.cheat code{direction:ltr;unicode-bidi:isolate;background:var(--accent-soft);padding:0 5px;border-radius:4px}
+table.cheat{border-collapse:collapse;width:100%;min-width:480px;font-size:15px}
+.cheat th{background:var(--accent-soft);padding:6px 10px;text-align:right}
+.cheat td{padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.cheat td:first-child{white-space:nowrap;width:1%}
+.cheat td.no{color:var(--bad)}
+details.more{font-size:15px}
+details.more summary{cursor:pointer;font-weight:700;color:var(--accent)}
+details.more[open] summary{margin-bottom:8px}
+
+/* compare */
+table.cmp{border-collapse:collapse;width:100%;min-width:560px;font-size:15px}
+.cmp th,.cmp td{padding:8px;border-bottom:1px solid var(--line);text-align:center}
+.cmp th{background:var(--accent-soft);font-family:var(--f-code);direction:ltr}
+.cmp td:first-child{text-align:right;font-weight:600}
+.cmp select{font:inherit;font-size:14px;padding:4px 6px;border:1.5px solid var(--line);border-radius:5px;background:var(--paper);color:var(--ink);width:100%}
+
+/* reflect + report */
+.refl{display:grid;gap:6px}
+.refl label{font-weight:600}
+.refl textarea{width:100%;font:inherit;font-size:16px;padding:10px;border:1.5px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
+pre.report{margin:0;white-space:pre-wrap;font-family:var(--f-body);font-size:15px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px}
+footer{padding-block:30px 50px;color:var(--muted);font-size:14px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="who">
+      <input id="stuName" type="text" placeholder="שם התלמיד/ה" aria-label="שם התלמיד/ה">
+      <input id="stuClass" type="text" placeholder="כיתה" aria-label="כיתה" style="max-width:110px">
+    </div>
+    <div class="score">
+      <span>נקודות <b id="scoreNum">0/0</b></span>
+      <div class="pbars" id="pbars"></div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <header class="hero">
+    <div class="eyebrow">דף עבודה · מבני נתונים בפייתון</div>
+    <h1><span class="k">list</span> <span class="sep">·</span> <span class="k">tuple</span> <span class="sep">·</span> <span class="k">dict</span></h1>
+    <p class="lead">חזרה על רשימות וטאפלים, ואז חקר של המבנה החדש: המילון. בכל תא תחזו פלט, תמלאו טבלאות מעקב, תריצו קוד אמיתי ותכתבו קוד משלכם. התשובות נשמרות בדפדפן שלכם, ובסוף הדף יש סיכום להגשה.</p>
+    <div class="legend">
+      <span class="chip">חיזוי פלט</span>
+      <span class="chip">טבלת מעקב</span>
+      <span class="chip sun">מעבדת חקר — מריצים ובודקים</span>
+      <span class="chip">כתיבת קוד עם בדיקה אוטומטית</span>
+      <span class="chip">בעיות מילוליות</span>
+    </div>
+    <div class="teacher-note" id="teacherNote" hidden>מצב מורה פעיל: כל התשובות והפתרונות מוצגים. להסתרה, הסירו את <code>#teacher</code> מהכתובת.</div>
+  </header>
+  <div id="app"></div>
+
+  <section class="part" id="report">
+    <div class="part-head"><span class="num">הגשה</span><h2>סיכום העבודה</h2>
+      <p class="sub">הסיכום מתעדכן אוטומטית. העתיקו אותו והדביקו במקום שהמורה ביקש/ה (מודל, Classroom, מייל).</p></div>
+    <div class="cell">
+      <pre class="report" id="reportText"></pre>
+      <div class="ed-bar"><button class="btn" id="copyReport">העתקת הסיכום</button><span class="fb" id="copyFb" style="flex-basis:auto"></span></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>הקוד רץ בדפדפן באמצעות Skulpt, מימוש של פייתון 3 ב-JavaScript. התנהגות זהה לפייתון ברוב המקרים, למעט פרטים כמו נוסח הודעות שגיאה.</span>
+    <button class="btn ghost small" id="resetBtn">איפוס כל התשובות</button>
+  </footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+<script>
+"use strict";
+/* ============ content ============ */
+const PARTS=[
+ {id:'A',num:'חלק א',name:'רשימות',sub:'חזרה קצרה על מה שכבר למדנו. רשימה היא אוסף סדור שניתן לשינוי, וניגשים לאיברים שלה לפי מיקום.'},
+ {id:'B',num:'חלק ב',name:'טאפלים',sub:'טאפל דומה לרשימה, אבל אי אפשר לשנות אותו אחרי שנוצר. שימו לב במיוחד לפסיק, לפריקה ולטאפל שמכיל רשימה.'},
+ {id:'C',num:'חלק ג',name:'מילון',sub:'הנושא החדש של היום. מתחילים במעבדות חקר: מריצים, מסתכלים ומסיקים. אחר כך חיזוי פלט, טבלאות מעקב וכתיבת קוד.'}
+];
+
+const idxStrip=(name,vals,locked)=>`<div class="tr-wrap" style="border:0"><div class="idx${locked?' locked':''}" style="grid-template-columns:auto repeat(${vals.length},minmax(58px,1fr));min-width:${110+70*vals.length}px">
+  <span class="lab">אינדקס חיובי</span>${vals.map((v,i)=>`<span class="pos">${i}</span>`).join('')}
+  <span class="lab">${name} =</span>${vals.map(v=>`<span class="v">${esc(v)}</span>`).join('')}
+  <span class="lab">אינדקס שלילי</span>${vals.map((v,i)=>`<span class="neg">${i-vals.length}</span>`).join('')}</div></div>`;
+const terms=arr=>`<dl class="terms">${arr.map(([t,d])=>`<div class="term"><dt>${t}</dt><dd>${d}</dd></div>`).join('')}</dl>`;
+const cheat=rows=>`<details class="more" open><summary>דף עזר: פעולות נפוצות</summary><div class="tr-wrap"><table class="cheat"><thead><tr><th>פעולה</th><th>מה היא עושה</th></tr></thead><tbody>${rows.map(([c,d,no])=>`<tr><td><code>${esc(c)}</code></td><td${no?' class="no"':''}>${d}</td></tr>`).join('')}</tbody></table></div></details>`;
+
+const BLOCKS=[
+/* ---------- A: lists ---------- */
+{part:'A',id:'A0',type:'intro',title:'מבוא: מהי רשימה?',html:()=>`
+ <p class="defn"><b>רשימה (list)</b> היא אוסף <b>סדור</b> של איברים, ש<b>ניתן לשנות</b> אחרי שנוצר: להוסיף, למחוק ולעדכן. מגדירים אותה בסוגריים מרובעים, והאיברים מופרדים בפסיקים.</p>
+ <pre class="code">${hl("my_list = [24.56, 'Itamar', 340, -7, 'Yael']   # אפשר לערבב טיפוסים\nempty = []                                    # רשימה ריקה")}</pre>
+ ${idxStrip('my_list',['24.56',"'Itamar'",'340','-7',"'Yael'"])}
+ ${terms([
+  ['איבר','ערך אחד בתוך הרשימה. איבר יכול להיות מכל טיפוס, גם רשימה אחרת.'],
+  ['אינדקס','המיקום של האיבר. מתחילים מ-0. אינדקס שלילי סופר מהסוף: <code>-1</code> הוא האחרון.'],
+  ['חיתוך','<code>lst[start:end:step]</code> מחזיר תת-רשימה. האיבר במקום <code>end</code> לא נכלל.'],
+  ['מתודה','פעולה של הרשימה שנכתבת אחרי נקודה, למשל <code>lst.append(5)</code>. חלק מהמתודות משנות את הרשימה עצמה.']])}
+ ${cheat([
+  ['lst.append(x)','מוסיפה את x לסוף הרשימה'],['len(lst)','מספר האיברים'],['lst.count(x)','כמה פעמים x מופיע'],
+  ['x in lst','True אם x ברשימה, אחרת False'],['lst.remove(x)','מוחקת את המופע הראשון של x (שגיאה אם לא קיים)'],
+  ['lst.pop(i)','מוחקת ומחזירה את האיבר במקום i (בלי i: את האחרון)'],['lst.index(x)','המיקום הראשון של x (שגיאה אם לא קיים)'],
+  ["list('abc')","['a', 'b', 'c'] — כל תו הופך לאיבר"],["' '.join(lst)",'מחברת רשימת מחרוזות למחרוזת אחת'],["s.split(',')",'מפצלת מחרוזת לרשימה לפי תו']])}`},
+{part:'A',id:'A1',type:'predict',title:'מה יודפס?',
+ intro:'כל שורה מתחילה מהרשימה <b>data</b> המקורית שלמטה. כתבו בדיוק את מה שפייתון ידפיס, כולל סוגריים וגרשיים.',
+ setup:"data = ['AA', 'BB', 1, 2, 3, 4, 'CC']",
+ items:[
+  {code:"print(data[::-1])",ans:["['CC', 4, 3, 2, 1, 'BB', 'AA']"]},
+  {code:"print(data[1:4])",ans:["['BB', 1, 2]"],why:'החיתוך מתחיל במקום 1 ועוצר לפני מקום 4.'},
+  {code:"print(data[-2])",ans:["4"]},
+  {code:"print(data.index(3))",ans:["4"],why:'index מחזיר מיקום, לא ערך. המספר 3 נמצא במקום 4.'},
+  {code:"print('bb' in data)",ans:["False"],why:'השוואת מחרוזות רגישה לאותיות גדולות וקטנות: \'bb\' שונה מ-\'BB\'.'},
+  {code:"x = data.pop(1)\nprint(x, len(data))",ans:["BB 6"],why:'pop מוחק לפי מיקום ומחזיר את האיבר שנמחק. ברשימה נשארו 6 איברים.'}
+ ]},
+{part:'A',id:'A2',type:'trace',title:'טבלת מעקב: בניית רשימה בלולאה',
+ intro:'עקבו אחרי הקוד שורה אחר שורה. בכל סיבוב רשמו את תוצאת התנאי ואת תוכן <b>nums</b> בסוף הסיבוב.',
+ code:"nums = []\nfor k in range(1, 5):\n    if k % 2 == 0:\n        nums.append(k * 10)\n    else:\n        nums.append(k)\nprint(nums)",
+ cols:['k','k % 2 == 0','nums בסוף הסיבוב'],
+ rows:[[{f:'1'},{a:['False']},{a:['[1]']}],[{f:'2'},{a:['True']},{a:['[1, 20]']}],[{f:'3'},{a:['False']},{a:['[1, 20, 3]']}],[{f:'4'},{a:['True']},{a:['[1, 20, 3, 40]']}]],
+ extra:[{code:'print(len(nums))',ans:['4']},{code:'print(nums.count(20))',ans:['1']}]},
+{part:'A',id:'A3',type:'mc',title:'מחיקה לפי ערך',
+ code:"animals = ['Giraffe', 'Lion', 'Hippo']\nanimals.remove('Dog')\nprint(animals)",
+ q:'מה יקרה כשנריץ את הקוד?',
+ opts:["יודפס <code>['Giraffe', 'Lion', 'Hippo']</code>","תתקבל שגיאה <code>IndexError</code>","תתקבל שגיאה <code>ValueError</code>","יודפס <code>[]</code>"],correct:2,
+ why:'remove מחפש לפי ערך. אם הערך לא קיים מתקבלת ValueError, ולכן כדאי לבדוק קודם עם in. זכרו את זה — במילון נפגוש בעיה דומה.'},
+{part:'A',id:'A4',type:'trace',title:'טבלת מעקב: חיפוש המקסימום',
+ intro:'הלולאה מחפשת את הציון הגבוה ביותר ואת המיקום שלו. שימו לב שהיא מתחילה ממקום 1, כי <b>best</b> כבר מאותחל לאיבר הראשון.',
+ code:"grades = [72, 95, 60, 88]\nbest = grades[0]\npos = 0\nfor i in range(1, len(grades)):\n    if grades[i] > best:\n        best = grades[i]\n        pos = i\nprint(best, pos)",
+ cols:['i','grades[i]','grades[i] > best','best','pos'],
+ rows:[
+  [{f:'1'},{a:['95']},{a:['True']},{a:['95']},{a:['1']}],
+  [{f:'2'},{a:['60']},{a:['False']},{a:['95']},{a:['1']}],
+  [{f:'3'},{a:['88']},{a:['False']},{a:['95']},{a:['1']}]
+ ],
+ extra:[{code:'print(best, pos)',ans:['95 1']},{code:'# כמה פעמים רצה הלולאה?',ans:['3']}]},
+{part:'A',id:'A5',type:'task',wp:true,title:'בעיה מילולית: חיישן טמפרטורה',
+ body:'במעבדת האלקטרוניקה חיברתם חיישן טמפרטורה לבקר, והוא מדד פעם ביום במשך שבוע. המדידות נשמרו ברשימה <code>readings</code>.<ol><li>חשבו ב-<code>avg</code> את הטמפרטורה הממוצעת של השבוע.</li><li>בנו רשימה <code>hot</code> עם כל המדידות שהן 25 מעלות ומעלה, לפי הסדר.</li><li>שמרו ב-<code>max_day</code> את <b>מיקום</b> המדידה הגבוהה ביותר ברשימה.</li></ol>',
+ starter:"readings = [21.5, 25.0, 19.0, 30.5, 27.0, 18.5, 24.0]\n\navg = 0\nhot = []\nmax_day = 0\n\n# כתבו כאן את הקוד\n\nprint('avg:', avg)\nprint('hot:', hot)\nprint('max day:', max_day)\n",
+ tests:[
+  {label:'<code>avg</code> הוא הממוצע הנכון',py:"abs(avg - sum(readings) / len(readings)) < 0.001"},
+  {label:'<code>hot</code> מכילה בדיוק את המדידות של 25 ומעלה',py:"hot == [x for x in readings if x >= 25]"},
+  {label:'<code>max_day</code> הוא מיקום המדידה הגבוהה',py:"max_day == readings.index(max(readings))"}
+ ],
+ solution:"readings = [21.5, 25.0, 19.0, 30.5, 27.0, 18.5, 24.0]\n\navg = sum(readings) / len(readings)\n\nhot = []\nfor r in readings:\n    if r >= 25:\n        hot.append(r)\n\nmax_day = 0\nfor i in range(1, len(readings)):\n    if readings[i] > readings[max_day]:\n        max_day = i\n\nprint('avg:', avg)\nprint('hot:', hot)\nprint('max day:', max_day)\n"},
+{part:'A',id:'A6',type:'task',wp:true,title:'בעיה מילולית: רשימת השמעה',
+ body:'נועה מכינה רשימת השמעה למסיבת הכיתה. עדכנו את <code>playlist</code> לפי הסדר הבא:<ol><li>מחקו את <code>\'Song B\'</code>, כי אף אחד לא אוהב אותו.</li><li>הוסיפו את <code>\'Song D\'</code> לסוף הרשימה.</li><li>העבירו את השיר הראשון לסוף הרשימה. רמז: <code>pop(0)</code> ואז <code>append</code>.</li><li>שמרו ב-<code>count</code> את מספר השירים ברשימה.</li></ol>',
+ starter:"playlist = ['Intro', 'Song A', 'Song B', 'Song C']\n\n# 1. מחיקה\n\n# 2. הוספה\n\n# 3. העברת הראשון לסוף\n\ncount = 0\nprint(playlist, count)\n",
+ tests:[
+  {label:"<code>'Song B'</code> לא ברשימה",py:"'Song B' not in playlist"},
+  {label:"<code>'Song D'</code> נוסף",py:"'Song D' in playlist"},
+  {label:'הסדר הסופי נכון',py:"playlist == ['Song A', 'Song C', 'Song D', 'Intro']"},
+  {label:'<code>count</code> נכון',py:"count == len(playlist) and count == 4"}
+ ],
+ solution:"playlist = ['Intro', 'Song A', 'Song B', 'Song C']\n\nplaylist.remove('Song B')\nplaylist.append('Song D')\nfirst = playlist.pop(0)\nplaylist.append(first)\n\ncount = len(playlist)\nprint(playlist, count)\n"},
+
+/* ---------- B: tuples ---------- */
+{part:'B',id:'B0',type:'intro',title:'מבוא: מהו טאפל?',html:()=>`
+ <p class="defn"><b>טאפל (tuple)</b>, או רשומה, הוא אוסף <b>סדור</b> של איברים ש<b>אינו ניתן לשינוי</b> אחרי שנוצר. מגדירים אותו בסוגריים עגולים. כמו ברשימה, ניגשים לאיברים לפי אינדקס שמתחיל מ-0.</p>
+ <pre class="code">${hl("led = (255, 128, 0)      # צבע RGB של נורית\none = (20,)               # טאפל של איבר אחד: חובה פסיק\nempty = ()                # טאפל ריק\nr, g, b = led             # פריקה לשלושה משתנים")}</pre>
+ ${idxStrip('led',['255','128','0'],true)}
+ ${terms([
+  ['בלתי ניתן לשינוי','אי אפשר להוסיף, למחוק או להחליף איבר. ניסיון כזה מחזיר <code>TypeError</code>.'],
+  ['פריקה (unpacking)','<code>a, b = t</code> מציב כל איבר במשתנה משלו. <code>a, *rest = t</code> אוסף את השאר לרשימה.'],
+  ['המרה (casting)','<code>tuple(lst)</code> הופך רשימה לטאפל, ו-<code>list(t)</code> הופך טאפל לרשימה.'],
+  ['למה טאפל?','מגן על נתונים שלא אמורים להשתנות (תאריך, קואורדינטה, צבע), חסכוני יותר בזיכרון, ויכול לשמש מפתח במילון.']])}
+ ${cheat([
+  ['t[i] , t[a:b]','גישה וחיתוך — בדיוק כמו ברשימה'],['len(t)','מספר האיברים'],['t.count(x) , t.index(x)','ספירה ומציאת מיקום'],
+  ['x in t','בדיקה אם x בטאפל'],['t1 + t2','יוצר טאפל חדש מחיבור השניים'],['for x in t:','מעבר על האיברים בלולאה'],
+  ['t[0] = 9','לא עובד: TypeError',true],['t.append(x) , t.remove(x)','לא קיימות לטאפל',true]])}`},
+{part:'B',id:'B1',type:'predict',title:'חיתוך, פסיק וכוכבית',
+ intro:'שלוש השורות הראשונות משתמשות ב-<b>tpl</b>. השורות האחרות עומדות בפני עצמן.',
+ setup:"tpl = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)",
+ items:[
+  {code:"print(tpl[2:8:2])",ans:["(3, 5, 7)"]},
+  {code:"print(tpl[8:2:-1])",ans:["(9, 8, 7, 6, 5, 4)"],why:'צעד שלילי הולך אחורה: מתחילים במקום 8 ועוצרים לפני מקום 2.'},
+  {code:"print(tpl[::-1][:3])",ans:["(10, 9, 8)"]},
+  {code:"x = (20)\nprint(type(x))",ans:["<class 'int'>"],why:'בלי פסיק, הסוגריים הם סוגריים של ביטוי חשבוני בלבד.'},
+  {code:"y = (20,)\nprint(type(y))",ans:["<class 'tuple'>"]},
+  {code:"a, b, *c = (1, 2, 3, 4, 5)\nprint(c)",ans:["[3, 4, 5]"],why:'הכוכבית אוספת את כל מה שנשאר, והתוצאה היא רשימה ולא טאפל.'},
+  {code:"t = (1, 2) + (3,)\nprint(t)",ans:["(1, 2, 3)"],why:'חיבור טאפלים יוצר טאפל חדש. הטאפלים המקוריים לא השתנו.'}
+ ]},
+{part:'B',id:'B2',type:'mc',title:'אפשר לשנות?',
+ code:"t = (1, 2, 3)\nt[0] = 9\nprint(t)",
+ q:'מה יקרה?',
+ opts:["יודפס <code>(9, 2, 3)</code>","תתקבל שגיאה <code>TypeError</code>","תתקבל שגיאה <code>IndexError</code>","נוצר טאפל חדש באופן אוטומטי"],correct:1,
+ why:'טאפל אינו תומך בהשמה לאיבר. כדי "לשנות" צריך להמיר לרשימה, לשנות, ולהמיר בחזרה — כמו בתרגיל הקשת מהשיעור.'},
+{part:'B',id:'B3',type:'explore',title:'מעבדה: טאפל שמכיל רשימה',
+ intro:'הריצו את הקוד. שימו לב איזו שורה מצליחה ואיזו נכשלת.',
+ code:"t2 = (1, [2, 3], 4)\nt2[1][1] = 7\nprint(t2)\nt2[1] = [9]\nprint(t2)",
+ qs:[
+  {k:'text',q:'מה הודפס בשורה הראשונה של הפלט?',ans:["(1, [2, 7], 4)"]},
+  {k:'mc',q:'למה <code>t2[1][1] = 7</code> הצליח ו-<code>t2[1] = [9]</code> נכשל?',opts:['הטאפל עצמו לא משתנה, אבל הרשימה שבתוכו היא אובייקט שניתן לשינוי','טאפל מאפשר לשנות רק את האיבר האמצעי','פייתון מתעלם מהשורה השנייה','שתי השורות זהות והתוצאה מקרית'],correct:0,
+   why:'הטאפל מחזיק "הפניה" לרשימה. את ההפניה אי אפשר להחליף, אבל את תוכן הרשימה אפשר לשנות.'}
+ ]},
+{part:'B',id:'B4',type:'trace',title:'טבלת מעקב: פריקת טאפלים בלולאה',
+ intro:'כל איבר ב-<b>points</b> הוא טאפל (x, y). בכל סיבוב הלולאה פורקת אותו לשני משתנים. רשמו את הערכים בסוף כל סיבוב.',
+ code:"points = ((1, 2), (3, -1), (0, 5))\ntotal_x = 0\nmax_y = points[0][1]\nfor x, y in points:\n    total_x = total_x + x\n    if y > max_y:\n        max_y = y\nprint(total_x, max_y)",
+ cols:['סיבוב','x','y','total_x','max_y'],
+ rows:[
+  [{f:'1'},{a:['1']},{a:['2']},{a:['1']},{a:['2']}],
+  [{f:'2'},{a:['3']},{a:['-1']},{a:['4']},{a:['2']}],
+  [{f:'3'},{a:['0']},{a:['5']},{a:['4']},{a:['5']}]
+ ],
+ extra:[{code:'print(total_x, max_y)',ans:['4 5']},{code:'print(points[1])',ans:['(3, -1)']},{code:'print(points[2][0])',ans:['0']}]},
+{part:'B',id:'B5',type:'task',wp:true,title:'בעיה מילולית: עמעום נורית RGB',
+ body:'נורית RGB מקבלת צבע כטאפל של שלושה ערכים בין 0 ל-255. הצבע הנוכחי שמור ב-<code>led</code>, ואסור לשנות אותו.<ol><li>פרקו את <code>led</code> לשלושה משתנים: <code>r</code>, <code>g</code>, <code>b</code>.</li><li>צרו טאפל חדש <code>dimmed</code> שבו כל ערך הוא חצי מהמקורי, בחלוקה שלמה (<code>//</code>).</li><li>הדפיסו את שני הצבעים.</li></ol>',
+ starter:"led = (255, 128, 0)\n\n# 1. פריקה\n\n# 2. טאפל חדש מעומעם\ndimmed = ()\n\nprint(led, dimmed)\n",
+ tests:[
+  {label:'<code>r, g, b</code> מכילים את ערכי הצבע',py:"(r, g, b) == led"},
+  {label:'<code>dimmed</code> הוא טאפל',py:"isinstance(dimmed, tuple)"},
+  {label:'<code>dimmed</code> הוא (127, 64, 0)',py:"dimmed == (127, 64, 0)"},
+  {label:'<code>led</code> לא השתנה',py:"led == (255, 128, 0)"}
+ ],
+ solution:"led = (255, 128, 0)\n\nr, g, b = led\ndimmed = (r // 2, g // 2, b // 2)\n\nprint(led, dimmed)\n"},
+{part:'B',id:'B6',type:'task',wp:true,title:'בעיה מילולית: לוח מבחנים',
+ body:'רכזת השכבה שמרה את מבחני מרץ ברשימה <code>exams</code>. כל מבחן הוא טאפל (יום, חודש, מקצוע).<ol><li>שמרו ב-<code>first_exam</code> את שם המקצוע של המבחן המוקדם ביותר בחודש.</li><li>צרו <b>טאפל</b> <code>subjects</code> עם שמות כל המקצועות, לפי סדר הרשימה. רמז: בנו קודם רשימה ואז המירו.</li><li>שמרו ב-<code>count_after_10</code> כמה מבחנים מתקיימים אחרי ה-10 בחודש.</li></ol>',
+ starter:"exams = [(12, 3, 'math'), (5, 3, 'physics'), (20, 3, 'english'), (9, 3, 'electronics')]\n\nfirst_exam = ''\nsubjects = ()\ncount_after_10 = 0\n\n# כתבו כאן את הקוד\n\nprint(first_exam)\nprint(subjects)\nprint(count_after_10)\n",
+ tests:[
+  {label:"<code>first_exam</code> הוא 'physics'",py:"first_exam == 'physics'"},
+  {label:'<code>subjects</code> הוא טאפל',py:"isinstance(subjects, tuple)"},
+  {label:'<code>subjects</code> מכיל את כל המקצועות לפי הסדר',py:"subjects == ('math', 'physics', 'english', 'electronics')"},
+  {label:'<code>count_after_10</code> נכון',py:"count_after_10 == 2"}
+ ],
+ solution:"exams = [(12, 3, 'math'), (5, 3, 'physics'), (20, 3, 'english'), (9, 3, 'electronics')]\n\nfirst_day = 32\nfirst_exam = ''\nnames = []\ncount_after_10 = 0\n\nfor day, month, subject in exams:\n    names.append(subject)\n    if day < first_day:\n        first_day = day\n        first_exam = subject\n    if day > 10:\n        count_after_10 = count_after_10 + 1\n\nsubjects = tuple(names)\n\nprint(first_exam)\nprint(subjects)\nprint(count_after_10)\n"},
+
+/* ---------- C: dictionaries ---------- */
+{part:'C',id:'C0',type:'intro',title:'מבוא: מהו מילון?',html:()=>`
+ <p class="defn"><b>מילון (dict)</b> הוא אוסף של <b>זוגות</b>: לכל זוג יש <b>מפתח (key)</b> ו<b>ערך (value)</b>. ברשימה ניגשים לאיבר לפי המיקום שלו, ובמילון ניגשים לערך לפי המפתח שלו. מגדירים מילון בסוגריים מסולסלים.</p>
+ <div class="concept"><div class="bag" aria-label="איור: מילון כשק של זוגות מפתח וערך">
+   <div class="cap"><span>key (מפתח)</span><span>value (ערך)</span></div>
+   <div class="pair"><span class="key">'00001234'</span><span class="arrow">→</span><span class="val">85</span></div>
+   <div class="pair"><span class="key">'00003579'</span><span class="arrow">→</span><span class="val">95</span></div>
+   <div class="pair"><span class="key">'00002468'</span><span class="arrow">→</span><span class="val">65</span></div>
+ </div>
+ <ul><li>רשימה היא כמו שורת תאים ממוספרים. מילון הוא כמו שק של פריטים, שעל כל אחד יש תווית.</li>
+  <li>לא שואלים "מה במקום השלישי?" אלא "מה מסומן בתווית הזאת?".</li>
+  <li>דוגמה: ציונים לפי תעודת זהות, מחיר לפי שם מוצר, ערך ספרתי לפי צבע של נגד.</li></ul></div>
+ <pre class="code">${hl("students_grade = {'00001234': 85, '00003579': 95}\nstudents_grade['00002468'] = 65        # הוספת זוג חדש\nstudents_grade['00001234'] = 90        # עדכון ערך קיים\nprint(students_grade['00003579'])       # 95\nempty = {}                              # מילון ריק")}</pre>
+ ${terms([
+  ['מפתח (key)','חייב להיות <b>ייחודי</b> ו<b>בלתי ניתן לשינוי</b>: מספר, מחרוזת או טאפל. רשימה לא יכולה להיות מפתח.'],
+  ['ערך (value)','יכול להיות כל דבר, וערכים יכולים לחזור: מספר, מחרוזת, רשימה, טאפל ואפילו מילון.'],
+  ['השמה','<code>d[k] = v</code> מוסיף זוג אם k חדש, ומחליף את הערך אם k כבר קיים.'],
+  ['KeyError','השגיאה שמתקבלת בגישה <code>d[k]</code> למפתח שלא קיים. <code>get</code> ו-<code>in</code> עוזרים להימנע ממנה.']])}
+ ${cheat([
+  ['d[k]','הערך של המפתח k (שגיאה אם לא קיים)'],['d[k] = v','הוספה או עדכון'],['d.get(k, default)','הערך של k, או default אם k לא קיים (בלי default: None)'],
+  ['k in d','בדיקה אם k הוא מפתח במילון'],['d.pop(k)','מוחקת את המפתח k ומחזירה את הערך שלו'],['len(d)','מספר הזוגות'],
+  ['d.keys() , d.values()','כל המפתחות / כל הערכים'],['d.items()','כל הזוגות, כל זוג כטאפל (k, v)'],['for k in d:','לולאה שעוברת על המפתחות'],
+  ['d.setdefault(k, v)','מוסיפה את k עם v רק אם k עוד לא קיים'],['d.update(d2)','מוסיפה למילון את כל הזוגות של d2'],['d.clear()','מרוקנת את המילון']])}
+ <p class="intro">במעבדות הבאות תבדקו את הכללים האלה בעצמכם.</p>`},
+{part:'C',id:'C1',type:'explore',title:'מעבדה 1: מה קורה למפתח כפול?',
+ intro:'הריצו, קראו את הפלט וענו.',
+ code:"d = {'a': 1, 'b': 2, 'a': 3}\nprint(d)\nprint(len(d))",
+ qs:[
+  {k:'mc',q:'מה קרה למפתח <code>\'a\'</code>?',opts:['נשמרו שני זוגות עם המפתח a','הערך הראשון (1) נשמר והשני נזרק','הערך האחרון (3) דרס את הקודם','התקבלה שגיאה'],correct:2},
+  {k:'text',q:'מה הדפיס <code>len(d)</code>?',ans:['2']},
+  {k:'mc',q:'אז מה נכון לגבי מילון?',opts:['מפתחות יכולים לחזור, ערכים לא','ערכים יכולים לחזור, מפתחות לא','גם מפתחות וגם ערכים יכולים לחזור','שום דבר לא יכול לחזור'],correct:1}
+ ]},
+{part:'C',id:'C2',type:'explore',title:'מעבדה 2: גישה בטוחה עם get',
+ intro:'בשורה האחרונה צפויה שגיאה. זה בכוונה.',
+ code:"grades = {'Dana': 90, 'Yossi': 78}\nprint(grades.get('Noa'))\nprint(grades.get('Noa', 0))\nprint(len(grades))\nprint(grades['Noa'])",
+ qs:[
+  {k:'text',q:'מה הודפס בשורה הראשונה של הפלט?',ans:['None']},
+  {k:'mc',q:'מה עושה הארגומנט השני ב-<code>get(\'Noa\', 0)</code>?',opts:['מוסיף את Noa למילון עם ציון 0','ערך ברירת מחדל שמוחזר אם המפתח לא קיים','מספר המיקום שבו מחפשים','מוחק את Noa מהמילון'],correct:1},
+  {k:'text',q:'האם Noa נוסף למילון אחרי הקריאות ל-get? (כן / לא) — רמז: הסתכלו על len',ans:['לא']},
+  {k:'text',q:'איזה סוג שגיאה התקבל בשורה האחרונה?',ans:['KeyError'],contains:'keyerror'}
+ ]},
+{part:'C',id:'C3',type:'explore',title:'מעבדה 3: על מה in בודק?',
+ code:"nums = {1: 'one', 2: 'two', 3: 'three'}\nprint(2 in nums)\nprint('two' in nums)\nprint('two' in nums.values())\nprint(list(nums.keys()))",
+ qs:[
+  {k:'text',q:'מה הודפס בשורה השנייה של הפלט?',ans:['False']},
+  {k:'mc',q:'על מה האופרטור <code>in</code> בודק כשמפעילים אותו על מילון?',opts:['על הערכים','על המפתחות','גם על המפתחות וגם על הערכים','על המיקומים'],correct:1},
+  {k:'mc',q:'איך בודקים אם <b>ערך</b> נמצא במילון?',opts:['<code>\'two\' in nums</code>','<code>\'two\' in nums.values()</code>','<code>nums.get(\'two\')</code>','<code>nums.index(\'two\')</code>'],correct:1}
+ ]},
+{part:'C',id:'C4',type:'explore',title:'מעבדה 4: מי יכול להיות מפתח?',
+ intro:'במצגת נכתב שמפתח "יכול להיות כל דבר". בואו נבדוק את זה בניסוי.',
+ code:"d = {}\nd[5] = 'int'\nd[2.5] = 'float'\nd['x'] = 'str'\nd[(1, 2)] = 'tuple'\nprint(d)\nd[[1, 2]] = 'list'\nprint(d)",
+ qs:[
+  {k:'mc',q:'איזו שורה נכשלה?',opts:["<code>d[2.5] = 'float'</code>","<code>d[(1, 2)] = 'tuple'</code>","<code>d[[1, 2]] = 'list'</code>","אף שורה לא נכשלה"],correct:2},
+  {k:'mc',q:'למה טאפל יכול להיות מפתח ורשימה לא?',opts:['טאפל קצר יותר מרשימה','טאפל אינו ניתן לשינוי, ולכן הוא יכול לשמש "תווית" קבועה','רשימה אינה יכולה להכיל מספרים','זו טעות בפייתון'],correct:1,
+   why:'מפתח חייב להיות ערך שלא ישתנה (hashable). מספרים, מחרוזות וטאפלים מתאימים; רשימות ומילונים לא. הערכים, לעומת זאת, יכולים להיות כל דבר.'}
+ ]},
+{part:'C',id:'C5',type:'explore',title:'מעבדה 5: השמה, setdefault ו-get',
+ code:"stock = {'pen': 10}\nstock['pen'] = 4\nstock.setdefault('pen', 100)\nstock.setdefault('eraser', 100)\nstock['ruler'] = stock.get('ruler', 0) + 1\nprint(stock)",
+ qs:[
+  {k:'text',q:"מה הערך של <code>stock['pen']</code> בסוף?",ans:['4']},
+  {k:'text',q:"מה הערך של <code>stock['ruler']</code> בסוף?",ans:['1']},
+  {k:'mc',q:'מה ההבדל בין <code>=</code> ל-<code>setdefault</code>?',opts:['אין הבדל','<code>=</code> תמיד כותב; <code>setdefault</code> כותב רק אם המפתח עוד לא קיים','<code>setdefault</code> תמיד כותב; <code>=</code> רק אם המפתח לא קיים','<code>setdefault</code> מוחק את המפתח'],correct:1}
+ ]},
+{part:'C',id:'C6',type:'explore',title:'מעבדה 6: שוב טאפלים — items ו-popitem',
+ code:"nums = {1: 'one', 2: 'two'}\nfor pair in nums.items():\n    print(pair, type(pair))\nfor k, v in nums.items():\n    print(k, 'is', v)\nlast = nums.popitem()\nprint(last)\nprint(nums)",
+ qs:[
+  {k:'mc',q:'איזה טיפוס מקבלים לכל זוג מ-<code>items()</code> ומ-<code>popitem()</code>?',opts:['רשימה','מילון','טאפל','מחרוזת'],correct:2,
+   why:'כל זוג הוא טאפל (מפתח, ערך). לכן אפשר לפרק אותו ישר בלולאה: for k, v in nums.items(). הערה: בגרסאות פייתון מודרניות (3.7 ומעלה) popitem מוציא את הזוג שנוסף אחרון, ולא זוג אקראי.'},
+  {k:'text',q:'כמה זוגות נשארו ב-<code>nums</code> בסוף?',ans:['1']}
+ ]},
+{part:'C',id:'C7',type:'predict',title:'עכשיו בלי להריץ: מה יודפס?',
+ intro:'כל שורה מתחילה מהמילון <b>nums</b> המקורי. אם צפויה שגיאה, כתבו את סוג השגיאה.',
+ setup:"nums = {1: 'one', 2: 'two', 3: 'three'}",
+ items:[
+  {code:"print(nums[2])",ans:['two'],why:'2 כאן הוא מפתח, לא מיקום.'},
+  {code:"print(nums.get(5, '?'))",ans:['?']},
+  {code:"print(nums[0])",ans:['KeyError'],contains:'keyerror',why:'אין מפתח 0. במילון אין "מקום 0" — יש רק מפתחות.'},
+  {code:"nums[4] = 'four'\nprint(len(nums))",ans:['4']},
+  {code:"nums[1] = 'ONE'\nprint(len(nums))",ans:['3'],why:'המפתח 1 כבר קיים, ולכן הערך הוחלף ולא נוסף זוג חדש.'},
+  {code:"print(nums.pop(2))",ans:['two']},
+  {code:"print(sum(nums.keys()))",ans:['6']},
+  {code:"print('three' in nums)",ans:['False']}
+ ]},
+{part:'C',id:'C8',type:'trace',title:'טבלת מעקב: ספירת מילים',
+ intro:'זו התבנית הקלאסית לספירה עם מילון. בכל סיבוב רשמו מה מחזיר <b>get</b> לפני העדכון, ומה הערך של <b>counts[word]</b> אחרי העדכון.',
+ code:"line = 'the cat and the hat and the'\nwords = line.split()\ncounts = {}\nfor word in words:\n    counts[word] = counts.get(word, 0) + 1\nprint(counts)",
+ cols:['סיבוב','word','counts.get(word, 0)','counts[word] אחרי העדכון'],
+ rows:[
+  [{f:'1'},{f:"'the'"},{a:['0']},{a:['1']}],
+  [{f:'2'},{f:"'cat'"},{a:['0']},{a:['1']}],
+  [{f:'3'},{f:"'and'"},{a:['0']},{a:['1']}],
+  [{f:'4'},{f:"'the'"},{a:['1']},{a:['2']}],
+  [{f:'5'},{f:"'hat'"},{a:['0']},{a:['1']}],
+  [{f:'6'},{f:"'and'"},{a:['1']},{a:['2']}],
+  [{f:'7'},{f:"'the'"},{a:['2']},{a:['3']}]
+ ],
+ extra:[{code:'print(len(words))',ans:['7']},{code:'print(len(counts))',ans:['4']},{code:"print(counts['and'])",ans:['2']}]},
+{part:'C',id:'C9',type:'trace',title:'טבלת מעקב: סכום עגלת קניות',
+ intro:'עקבו אחרי הלולאה. בשורה שבה המוצר אינו במחירון, השאירו את העמודה השלישית ריקה.',
+ code:"prices = {'banana': 12, 'apple': 3, 'bread': 8, 'cheese': 30, 'juice': 25}\ncart = {'banana': 2, 'bread': 1, 'cheese': 2, 'pizza': 1}\ntotal = 0\nfor item in cart:\n    if item in prices:\n        total = total + prices[item] * cart[item]\n    else:\n        print('no price for', item)\nprint(total)",
+ cols:['item','item in prices','prices[item] * cart[item]','total'],
+ rows:[
+  [{f:"'banana'"},{a:['True']},{a:['24']},{a:['24']}],
+  [{f:"'bread'"},{a:['True']},{a:['8']},{a:['32']}],
+  [{f:"'cheese'"},{a:['True']},{a:['60']},{a:['92']}],
+  [{f:"'pizza'"},{a:['False']},{a:['','-','—','–']},{a:['92']}]
+ ],
+ extra:[{code:'# מה תדפיס הלולאה בסיבוב של pizza?',ans:['no price for pizza']},{code:'# ומה תהיה השורה האחרונה בפלט?',ans:['92']}]},
+{part:'C',id:'C10',type:'compare',title:'השוואה: רשימה, טאפל, מילון',
+ intro:'בחרו את התשובה הנכונה בכל תא. ההשוואה מסכמת את שלושת השיעורים.',
+ cols:['list','tuple','dict'],
+ rows:[
+  {label:'סוגריים בהגדרה',opts:['[ ]','( )','{ }'],ans:['[ ]','( )','{ }']},
+  {label:'ניתן לשינוי אחרי היצירה',opts:['כן','לא'],ans:['כן','לא','כן']},
+  {label:'ניגשים לאיבר לפי',opts:['מיקום (אינדקס)','מפתח'],ans:['מיקום (אינדקס)','מיקום (אינדקס)','מפתח']},
+  {label:'מותרות כפילויות',opts:['כן','לא','רק בערכים'],ans:['כן','כן','רק בערכים']},
+  {label:'יכול לשמש מפתח במילון',opts:['כן','לא'],ans:['לא','כן','לא']},
+  {label:'מה קורה בפנייה למשהו שלא קיים',opts:['IndexError','KeyError','מוחזר None'],ans:['IndexError','IndexError','KeyError']}
+ ]},
+{part:'C',id:'C11',type:'task',title:'משימה 1: עגלת קניות',
+ body:'<ol><li>צרו מילון <code>prices</code> עם 5 מוצרים לפחות: המפתח הוא שם המוצר והערך הוא המחיר.</li><li>צרו מילון <code>shopping_cart</code>: המפתח הוא שם המוצר והערך הוא הכמות בעגלה. הכניסו לפחות מוצר אחד שיש לו מחיר, ולפחות מוצר אחד שאינו במחירון.</li><li>חשבו ב-<code>total</code> את סכום הקנייה, בלי שהתוכנית תעוף על שגיאה. למוצר בלי מחיר הדפיסו הודעה מתאימה.</li></ol>',
+ starter:"# 1. מחירון\nprices = {}\n\n# 2. עגלת קניות (כולל מוצר אחד שאינו במחירון)\nshopping_cart = {}\n\n# 3. חישוב הסכום\ntotal = 0\n\nprint('total =', total)\n",
+ pre:"def __exp_total():\n    s = 0\n    for k in shopping_cart:\n        if k in prices:\n            s = s + prices[k] * shopping_cart[k]\n    return s\n",
+ tests:[
+  {label:'<code>prices</code> הוא מילון עם 5 מוצרים לפחות',py:"isinstance(prices, dict) and len(prices) >= 5"},
+  {label:'<code>shopping_cart</code> הוא מילון עם מוצר אחד לפחות שיש לו מחיר',py:"isinstance(shopping_cart, dict) and len([k for k in shopping_cart if k in prices]) >= 1"},
+  {label:'בעגלה יש מוצר שאינו במחירון',py:"len([k for k in shopping_cart if k not in prices]) >= 1"},
+  {label:'הערך של <code>total</code> נכון',py:"total == __exp_total()"},
+  {label:'התוכנית רצה עד הסוף בלי שגיאה',py:"True"}
+ ],
+ solution:"prices = {'banana': 12, 'apple': 3, 'bread': 8, 'cheese': 30, 'juice': 25}\nshopping_cart = {'banana': 2, 'bread': 1, 'cheese': 2, 'pizza': 1}\n\ntotal = 0\nfor item in shopping_cart:\n    if item in prices:\n        total = total + prices[item] * shopping_cart[item]\n    else:\n        print('no price for', item)\n\nprint('total =', total)\n"},
+{part:'C',id:'C12',type:'task',title:'משימה 2: מונה מילים',
+ body:'בנו את המילון <code>counts</code> שבו כל מילה במשפט היא מפתח, והערך הוא מספר הפעמים שהיא מופיעה. השתמשו ב-<code>split</code> ובתבנית שעקבתם אחריה בטבלה.',
+ starter:"sentence = 'to be or not to be that is the question'\ncounts = {}\n\n# כתבו כאן את הלולאה\n\nprint(counts)\n",
+ pre:"def __exp_counts():\n    c = {}\n    for w in sentence.split():\n        c[w] = c.get(w, 0) + 1\n    return c\n",
+ tests:[
+  {label:'<code>counts</code> הוא מילון',py:"isinstance(counts, dict)"},
+  {label:'כל מילה במשפט מופיעה כמפתח',py:"sorted(list(counts.keys())) == sorted(list(__exp_counts().keys()))"},
+  {label:'הספירה נכונה לכל המילים',py:"counts == __exp_counts()"}
+ ],
+ solution:"sentence = 'to be or not to be that is the question'\ncounts = {}\n\nfor word in sentence.split():\n    counts[word] = counts.get(word, 0) + 1\n\nprint(counts)\n"},
+{part:'C',id:'C13',type:'task',title:'משימה 3: מילון של טאפלים',
+ body:'במילון <code>students</code> המפתח הוא תעודת זהות, והערך הוא טאפל (שם, ציון).<ol><li>הדפיסו לכל תלמיד: ת"ז, שם וציון. פרקו את הטאפל לשני משתנים.</li><li>שמרו ב-<code>best_name</code> את שם התלמיד/ה עם הציון הגבוה ביותר.</li><li>בנו רשימה <code>passed</code> עם שמות התלמידים שקיבלו 70 ומעלה.</li></ol>',
+ starter:"students = {\n    '00001234': ('Dana', 85),\n    '00003579': ('Yossi', 95),\n    '00002468': ('Noa', 65),\n    '00001357': ('Omer', 72),\n}\n\nbest_name = ''\npassed = []\n\n# כתבו כאן את הקוד\n\nprint(best_name)\nprint(passed)\n",
+ pre:"def __exp_best():\n    bn = ''\n    bg = -1\n    for i in students:\n        n, g = students[i]\n        if g > bg:\n            bg = g\n            bn = n\n    return bn\ndef __exp_passed():\n    p = []\n    for i in students:\n        n, g = students[i]\n        if g >= 70:\n            p.append(n)\n    return p\n",
+ tests:[
+  {label:'<code>best_name</code> נכון',py:"best_name == __exp_best()"},
+  {label:'<code>passed</code> היא רשימה',py:"isinstance(passed, list)"},
+  {label:'ב-<code>passed</code> בדיוק התלמידים שעברו',py:"sorted(passed) == sorted(__exp_passed())"}
+ ],
+ solution:"students = {\n    '00001234': ('Dana', 85),\n    '00003579': ('Yossi', 95),\n    '00002468': ('Noa', 65),\n    '00001357': ('Omer', 72),\n}\n\nbest_name = ''\nbest_grade = -1\npassed = []\n\nfor sid in students:\n    name, grade = students[sid]\n    print(sid, name, grade)\n    if grade > best_grade:\n        best_grade = grade\n        best_name = name\n    if grade >= 70:\n        passed.append(name)\n\nprint(best_name)\nprint(passed)\n"},
+{part:'C',id:'C14',type:'task',title:'משימת אתגר: מילון של רשימות',
+ body:'בנו מילון <code>by_prefix</code> שבו המפתח הוא קידומת הטלפון (3 התווים הראשונים) והערך הוא <b>רשימת</b> השמות עם הקידומת הזאת. לדוגמה: <code>\'050\'</code> ← <code>[\'Dana\', \'Noa\']</code>. רמז: חיתוך מחרוזת.',
+ starter:"phones = {\n    'Dana': '050-1234567',\n    'Yossi': '052-7654321',\n    'Noa': '050-9999999',\n    'Omer': '054-1111111',\n}\n\nby_prefix = {}\n\n# כתבו כאן את הקוד\n\nprint(by_prefix)\n",
+ tests:[
+  {label:'<code>by_prefix</code> הוא מילון',py:"isinstance(by_prefix, dict)"},
+  {label:"המפתחות הם '050', '052', '054'",py:"sorted(list(by_prefix.keys())) == ['050', '052', '054']"},
+  {label:'כל ערך הוא רשימה',py:"len([v for v in by_prefix.values() if not isinstance(v, list)]) == 0"},
+  {label:"ב-'050' נמצאים Dana ו-Noa",py:"sorted(by_prefix.get('050', [])) == ['Dana', 'Noa']"}
+ ],
+ solution:"phones = {\n    'Dana': '050-1234567',\n    'Yossi': '052-7654321',\n    'Noa': '050-9999999',\n    'Omer': '054-1111111',\n}\n\nby_prefix = {}\nfor name in phones:\n    prefix = phones[name][:3]\n    if prefix not in by_prefix:\n        by_prefix[prefix] = []\n    by_prefix[prefix].append(name)\n\nprint(by_prefix)\n"},
+{part:'C',id:'C15',type:'task',wp:true,title:'בעיה מילולית: קוד הצבעים של נגד',
+ body:'על נגד יש שלושה פסי צבע. לכל צבע יש ספרה, והמילון <code>colors</code> שומר את ההתאמה. שני הפסים הראשונים הם שתי ספרות, והפס השלישי הוא מספר האפסים שמוסיפים (מכפיל של חזקת 10).<br>לדוגמה: חום, שחור, אדום ← 1, 0, 2 ← <code>10 × 10**2 = 1000</code> אוהם.<ol><li>פרקו את הטאפל <code>bands</code> לשלושה משתנים.</li><li>חשבו ב-<code>ohms</code> את ערך הנגד.</li><li>אם אחד הצבעים לא נמצא במילון, הדפיסו הודעה ושמרו ב-<code>ohms</code> את הערך <code>None</code>.</li></ol>נסו גם <code>(\'yellow\', \'violet\', \'orange\')</code> — אמור לצאת 47000.',
+ starter:"colors = {'black': 0, 'brown': 1, 'red': 2, 'orange': 3, 'yellow': 4,\n          'green': 5, 'blue': 6, 'violet': 7, 'grey': 8, 'white': 9}\n\nbands = ('brown', 'black', 'red')\n\nohms = 0\n\n# כתבו כאן את הקוד\n\nprint(ohms, 'ohm')\n",
+ pre:"def __exp_ohms():\n    a, b, c = bands\n    if a not in colors or b not in colors or c not in colors:\n        return None\n    return (colors[a] * 10 + colors[b]) * 10 ** colors[c]\n",
+ tests:[
+  {label:'<code>ohms</code> נכון עבור <code>bands</code> הנוכחי',py:"ohms == __exp_ohms()"},
+  {label:'<code>colors</code> לא השתנה',py:"len(colors) == 10 and colors['red'] == 2"},
+  {label:'<code>bands</code> הוא טאפל של שלושה צבעים',py:"isinstance(bands, tuple) and len(bands) == 3"}
+ ],
+ solution:"colors = {'black': 0, 'brown': 1, 'red': 2, 'orange': 3, 'yellow': 4,\n          'green': 5, 'blue': 6, 'violet': 7, 'grey': 8, 'white': 9}\n\nbands = ('brown', 'black', 'red')\n\nfirst, second, multiplier = bands\nif first in colors and second in colors and multiplier in colors:\n    ohms = (colors[first] * 10 + colors[second]) * 10 ** colors[multiplier]\nelse:\n    print('unknown color')\n    ohms = None\n\nprint(ohms, 'ohm')\n"},
+{part:'C',id:'C16',type:'task',wp:true,title:'בעיה מילולית: השאלת ספרים',
+ body:'בספריית בית הספר המילון <code>library</code> שומר כמה עותקים פנויים יש מכל ספר. הרשימה <code>requests</code> היא בקשות ההשאלה של היום, לפי הסדר.<ol><li>עברו על הבקשות. אם הספר קיים ויש לו עותק פנוי, הפחיתו עותק אחד והוסיפו את שם הספר לרשימה <code>approved</code>.</li><li>אם אין עותק פנוי, הוסיפו את הספר לרשימה <code>waiting</code>.</li><li>אם הספר בכלל לא קיים בספרייה, הדפיסו הודעה, הוסיפו אותו ל-<code>waiting</code>, והתוכנית צריכה להמשיך בלי שגיאה.</li></ol>',
+ starter:"library = {'Harry Potter': 2, 'Matilda': 1, 'Dune': 0}\nrequests = ['Matilda', 'Harry Potter', 'Matilda', 'Dune', 'Hobbit', 'Harry Potter']\n\napproved = []\nwaiting = []\n\n# כתבו כאן את הקוד\n\nprint('approved:', approved)\nprint('waiting:', waiting)\nprint('library:', library)\n",
+ tests:[
+  {label:'<code>approved</code> נכונה',py:"approved == ['Matilda', 'Harry Potter', 'Harry Potter']"},
+  {label:'<code>waiting</code> נכונה',py:"waiting == ['Matilda', 'Dune', 'Hobbit']"},
+  {label:'מספר העותקים במילון עודכן',py:"library.get('Harry Potter') == 0 and library.get('Matilda') == 0 and library.get('Dune') == 0"},
+  {label:"<code>'Hobbit'</code> לא נוסף למילון",py:"'Hobbit' not in library"}
+ ],
+ solution:"library = {'Harry Potter': 2, 'Matilda': 1, 'Dune': 0}\nrequests = ['Matilda', 'Harry Potter', 'Matilda', 'Dune', 'Hobbit', 'Harry Potter']\n\napproved = []\nwaiting = []\n\nfor book in requests:\n    if book not in library:\n        print('no such book:', book)\n        waiting.append(book)\n    elif library[book] > 0:\n        library[book] = library[book] - 1\n        approved.append(book)\n    else:\n        waiting.append(book)\n\nprint('approved:', approved)\nprint('waiting:', waiting)\nprint('library:', library)\n"},
+{part:'C',id:'R',type:'reflect',title:'רפלקציה',
+ prompts:[
+  'תנו דוגמה מהחיים למידע שמתאים לשמור ברשימה, בטאפל ובמילון. הסבירו למה בחרתם כך.',
+  'בספירת המילים השתמשנו ב-counts.get(word, 0) ולא ב-counts[word]. מה היה קורה אילו השתמשנו ב-counts[word]?',
+  'מה הפתיע אתכם במעבדות החקר?'
+ ]}
+];
+
+/* ============ state ============ */
+const LS='py-list-tuple-dict-ws-v1';
+let S={ans:{},code:{},refl:{},name:'',cls:''};
+try{const raw=localStorage.getItem(LS); if(raw) S=Object.assign(S,JSON.parse(raw));}catch(e){}
+function save(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){} updateScore();}
+let TEACHER=location.hash==='#teacher';
+const UNITS={}; // key -> {part, kind, ...}
+
+/* ============ helpers ============ */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const attr=s=>esc(s).replace(/"/g,'&quot;');
+function hl(code){
+  return esc(code).replace(/(#[^\n]*)|('(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*")|\b(for|in|if|else|elif|def|return|not|and|or|while|True|False|None)\b|\b(print|len|range|type|list|tuple|dict|sum|sorted|isinstance|str|int)\b|\b(\d+(?:\.\d+)?)\b/g,
+   (m,c,s,k,b,n)=>c?`<span class="t-c">${c}</span>`:s?`<span class="t-s">${s}</span>`:k?`<span class="t-k">${k}</span>`:b?`<span class="t-b">${b}</span>`:`<span class="t-n">${n}</span>`);
+}
+const norm=s=>String(s??'').trim().replace(/[“”״"]/g,"'").replace(/[‘’׳`]/g,"'").replace(/\s+/g,'');
+function matches(v,ans,contains){
+  const n=norm(v);
+  if(ans.some(a=>norm(a)===n)) return 'ok';
+  if(contains && n.toLowerCase().includes(contains)) return 'ok';
+  if(ans.some(a=>norm(a).toLowerCase()===n.toLowerCase()) && n!=='') return 'case';
+  return 'bad';
+}
+const $=id=>document.getElementById(id);
+
+/* ============ render ============ */
+function cellHead(b,kind,kcls){
+  return `<header class="cell-head"><span class="in">In [${b.id}]:</span><span class="kind ${kcls||''}">${kind}</span><span class="done" id="done-${b.id}"></span>${b.title?`<h3>${b.title}</h3>`:''}</header>`;
+}
+function textUnit(key,part,code,ans,why,contains,label){
+  UNITS[key]={part,kind:'text',ans,why,contains,label:label||code};
+  return `<div class="qrow">${code?`<pre class="code sm">${hl(code)}</pre>`:''}
+   <div class="ans"><input type="text" id="in-${key}" data-key="${key}" autocomplete="off" spellcheck="false" placeholder="הפלט שלכם">
+   <button class="btn small" data-act="check" data-key="${key}">בדיקה</button>
+   <span class="fb" id="fb-${key}"></span><div class="reveal" id="rv-${key}" hidden></div></div></div>`;
+}
+function mcUnit(key,part,q,opts,correct,why){
+  UNITS[key]={part,kind:'mc',correct,why,opts,label:q};
+  return `<div class="opts" role="radiogroup">${q?`<div class="q">${q}</div>`:''}
+   ${opts.map((o,i)=>`<label class="opt" id="opt-${key}-${i}"><input type="radio" name="${key}" value="${i}" data-act="mc" data-key="${key}"><span>${o}</span></label>`).join('')}
+   <span class="fb" id="fb-${key}"></span><div class="reveal" id="rv-${key}" hidden></div></div>`;
+}
+function editor(key,code,withTests){
+  const val=S.code[key]??code;
+  const rows=Math.max(4,val.split('\n').length+1);
+  return `<div class="ed"><textarea class="editor" id="ed-${key}" data-key="${key}" rows="${rows}" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="עורך קוד">${esc(val)}</textarea>
+   <div class="ed-bar"><button class="btn" data-act="run" data-key="${key}">▶ הרצה</button>${withTests?`<button class="btn ghost" data-act="test" data-key="${key}">הרצה ובדיקה</button>`:''}<button class="btn ghost small" data-act="restore" data-key="${key}">קוד מקורי</button><span class="hint">Tab = הזחה של 4 רווחים</span></div>
+   <pre class="out" id="out-${key}"></pre></div>`;
+}
+const STARTERS={};
+
+function renderBlock(b){
+  const P=b.part;
+  switch(b.type){
+  case 'predict':
+    return `<section class="cell" id="${b.id}">${cellHead(b,'חיזוי פלט')}<p class="intro">${b.intro}</p><pre class="code">${hl(b.setup)}</pre>
+     <div class="qrows">${b.items.map((it,i)=>textUnit(`${b.id}-${i}`,P,it.code,it.ans,it.why,it.contains)).join('')}</div></section>`;
+  case 'mc':
+    return `<section class="cell" id="${b.id}">${cellHead(b,'הבנת קוד')}<pre class="code">${hl(b.code)}</pre>${mcUnit(b.id,P,b.q,b.opts,b.correct,b.why)}</section>`;
+  case 'trace':{
+    const cells={};
+    const body=b.rows.map((r,ri)=>`<tr>${r.map((c,ci)=>{
+      if(c.f!==undefined) return `<td class="fixed">${esc(c.f)}</td>`;
+      const ck=`${b.id}-${ri}-${ci}`; cells[ck]=c.a;
+      return `<td><input type="text" id="tc-${ck}" data-key="${b.id}" autocomplete="off" spellcheck="false" aria-label="${attr(b.cols[ci])}, שורה ${ri+1}"></td>`;}).join('')}</tr>`).join('');
+    UNITS[b.id]={part:P,kind:'trace',cells,label:'טבלת מעקב'};
+    STARTERS[b.id]=null;
+    return `<section class="cell" id="${b.id}">${cellHead(b,'טבלת מעקב')}<p class="intro">${b.intro}</p><pre class="code">${hl(b.code)}</pre>
+     <div class="tr-wrap"><table class="tr"><thead><tr>${b.cols.map(c=>`<th><code>${esc(c)}</code></th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>
+     <div class="ans"><button class="btn" data-act="trace" data-key="${b.id}">בדיקת הטבלה</button><span class="fb" id="fb-${b.id}"></span><div class="reveal" id="rv-${b.id}" hidden></div></div>
+     <div class="subq"><div class="q">ובסוף הריצה:</div>${b.extra.map((x,i)=>textUnit(`${b.id}-x${i}`,P,x.code,x.ans,x.why)).join('')}</div></section>`;}
+  case 'explore':
+    STARTERS[b.id]=b.code;
+    return `<section class="cell" id="${b.id}">${cellHead(b,'מעבדת חקר','k-explore')}${b.intro?`<p class="intro">${b.intro}</p>`:''}${editor(b.id,b.code,false)}
+     <div class="subq">${b.qs.map((q,i)=>{const k=`${b.id}-q${i}`; return q.k==='mc'?mcUnit(k,P,q.q,q.opts,q.correct,q.why):`<div class="q">${q.q}</div>`+textUnit(k,P,null,q.ans,q.why,q.contains,q.q);}).join('')}</div></section>`;
+  case 'task':
+    STARTERS[b.id]=b.starter;
+    UNITS[b.id]={part:P,kind:'task',tests:b.tests,pre:b.pre||'',solution:b.solution,label:b.title};
+    return `<section class="cell" id="${b.id}">${cellHead(b,b.wp?'בעיה מילולית':'כתיבת קוד','k-task')}<div class="task-body">${b.body}</div>${editor(b.id,b.starter,true)}
+     <ul class="tests" id="tests-${b.id}">${b.tests.map((t,i)=>`<li id="t-${b.id}-${i}">${t.label}</li>`).join('')}</ul>
+     <span class="fb" id="fb-${b.id}"></span><div class="reveal" id="rv-${b.id}" hidden></div></section>`;
+  case 'compare':
+    UNITS[b.id]={part:P,kind:'compare',rows:b.rows,label:'טבלת השוואה'};
+    return `<section class="cell" id="${b.id}">${cellHead(b,'סיכום והשוואה')}<p class="intro">${b.intro}</p>
+     <div class="tr-wrap"><table class="cmp"><thead><tr><th></th>${b.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>
+     ${b.rows.map((r,ri)=>`<tr><td>${r.label}</td>${b.cols.map((c,ci)=>`<td><select id="cs-${b.id}-${ri}-${ci}" data-key="${b.id}" aria-label="${attr(r.label)} — ${c}"><option value="">בחרו</option>${r.opts.map(o=>`<option>${esc(o)}</option>`).join('')}</select></td>`).join('')}</tr>`).join('')}
+     </tbody></table></div>
+     <div class="ans"><button class="btn" data-act="compare" data-key="${b.id}">בדיקת הטבלה</button><span class="fb" id="fb-${b.id}"></span></div></section>`;
+  case 'intro':
+    return `<section class="cell intro-cell" id="${b.id}">${cellHead(b,'מבוא והגדרות')}${b.html()}</section>`;
+  case 'concept':
+    return `<section class="cell" id="C0">${cellHead({id:'C0',title:'מהו מילון?'},'מושג')}
+     <div class="concept"><div class="bag" aria-label="איור: מילון כשק של זוגות מפתח וערך">
+       <div class="cap"><span>key (מפתח)</span><span>value (ערך)</span></div>
+       <div class="pair"><span class="key">'00001234'</span><span class="arrow">→</span><span class="val">85</span></div>
+       <div class="pair"><span class="key">'00003579'</span><span class="arrow">→</span><span class="val">95</span></div>
+       <div class="pair"><span class="key">'00002468'</span><span class="arrow">→</span><span class="val">65</span></div>
+     </div>
+     <ul><li>מילון הוא אוסף של <b>זוגות</b>: מפתח וערך. מגדירים אותו בסוגריים מסולסלים <code>{ }</code>.</li>
+      <li>ברשימה ניגשים לפי מיקום: <code>lst[0]</code>. במילון ניגשים לפי מפתח: <code>grades['00001234']</code>.</li>
+      <li>כמו תווית על פריט בשק: לא שואלים "מה במקום השלישי?" אלא "מה מסומן בתווית הזאת?".</li></ul></div>
+     <pre class="code">${hl("students_grade = {}\nstudents_grade['00001234'] = 85\nstudents_grade['00003579'] = 95\nprint(students_grade['00001234'])   # 85")}</pre></section>`;
+  case 'reflect':
+    return `<section class="cell" id="R">${cellHead(b,'כתיבה חופשית')}<p class="intro">אין כאן תשובה אחת נכונה. התשובות ייכנסו לסיכום להגשה.</p>
+     ${b.prompts.map((p,i)=>`<div class="refl"><label for="rf-${i}">${i+1}. ${esc(p)}</label><textarea id="rf-${i}" data-refl="${i}" rows="3"></textarea></div>`).join('')}</section>`;
+  }
+}
+
+function render(){
+  let html='';
+  for(const p of PARTS){
+    html+=`<section class="part" id="part-${p.id}"><div class="part-head"><span class="num">${p.num}</span><h2>${p.name}</h2><p class="sub">${p.sub}</p></div>`;
+    html+=BLOCKS.filter(b=>b.part===p.id).map(renderBlock).join('');
+    html+='</section>';
+  }
+  $('app').innerHTML=html;
+  $('pbars').innerHTML=PARTS.map(p=>`<a class="pbar" href="#part-${p.id}" style="color:inherit;text-decoration:none" title="${p.name}"><i><span id="pb-${p.id}"></span></i>${p.num.replace('חלק ','')}</a>`).join('');
+  restore();
+  updateScore();
+}
+
+/* ============ restore + feedback ============ */
+function setFb(key,cls,msg){const el=$('fb-'+key); if(el){el.className='fb '+(cls||''); el.textContent=msg||'';}}
+function showReveal(key){
+  const u=UNITS[key], st=S.ans[key]||{}, rv=$('rv-'+key); if(!rv) return;
+  let html='';
+  const ansText=u.kind==='text'?`תשובה: <code>${esc(u.ans[0]||'(ריק)')}</code>`:u.kind==='mc'?`תשובה: ${u.opts[u.correct]}`:'';
+  if(TEACHER){html=ansText+(u.why?` — ${esc(u.why)}`:'');}
+  else if(st.ok && u.why){html=esc(u.why);}
+  else if(!st.ok && (st.tries||0)>=3 && (u.kind==='text'||u.kind==='mc')){
+    html=st.shown?ansText+(u.why?` — ${esc(u.why)}`:''):`<button class="linkbtn" data-act="show" data-key="${key}">אחרי 3 ניסיונות אפשר להציג את התשובה</button>`;
+  }
+  if(u.kind==='task' && (TEACHER || (!st.ok && (st.tries||0)>=3))){
+    html=(TEACHER||st.shown)?`<b>פתרון לדוגמה:</b><pre class="code sm" style="margin-top:6px">${hl(u.solution)}</pre>`:`<button class="linkbtn" data-act="show" data-key="${key}">הצגת פתרון לדוגמה</button>`;
+  }
+  if(u.kind==='trace' && TEACHER){
+    html='תשובות: '+Object.entries(u.cells).map(([k,a])=>`<code>${esc(a[0]||'—')}</code>`).join(' · ');
+  }
+  rv.innerHTML=html; rv.hidden=!html;
+}
+function paintText(key){
+  const st=S.ans[key]; const inp=$('in-'+key); if(!inp) return;
+  inp.classList.remove('ok','bad');
+  if(st && st.v!==undefined){inp.value=st.v; if(st.res) inp.classList.add(st.ok?'ok':'bad');}
+  if(st && st.res==='ok') setFb(key,'ok','נכון!');
+  else if(st && st.res==='case') setFb(key,'warn','כמעט. פייתון מבדיל בין אותיות גדולות לקטנות.');
+  else if(st && st.res==='bad') setFb(key,'bad','לא מדויק. בדקו שוב — שימו לב לסוגריים, לגרשיים ולרווחים.');
+  showReveal(key);
+}
+function paintMc(key){
+  const u=UNITS[key], st=S.ans[key];
+  u.opts.forEach((o,i)=>{$(`opt-${key}-${i}`).classList.remove('ok','bad');});
+  if(st && st.v!==undefined){
+    const el=document.querySelector(`input[name="${key}"][value="${st.v}"]`); if(el) el.checked=true;
+    $(`opt-${key}-${st.v}`).classList.add(st.ok?'ok':'bad');
+    setFb(key,st.ok?'ok':'bad',st.ok?'נכון!':'לא זו. נסו שוב.');
+  }
+  showReveal(key);
+}
+function paintTrace(key){
+  const u=UNITS[key], st=S.ans[key]; if(!st||!st.v) {showReveal(key);return;}
+  for(const ck in u.cells){const inp=$('tc-'+ck); inp.value=st.v[ck]??''; inp.classList.remove('ok','bad'); if(st.checked) inp.classList.add(matches(inp.value,u.cells[ck])==='ok'?'ok':'bad');}
+  if(st.checked) setFb(key,st.ok?'ok':'bad',st.ok?'כל הטבלה נכונה!':`${st.wrong} תאים לא נכונים (מסומנים באדום).`);
+  showReveal(key);
+}
+function paintCompare(key){
+  const u=UNITS[key], st=S.ans[key];
+  u.rows.forEach((r,ri)=>r.ans.forEach((a,ci)=>{const s=$(`cs-${key}-${ri}-${ci}`); s.classList.remove('ok','bad');
+    if(TEACHER){s.value=a;} else if(st&&st.v){s.value=st.v[`${ri}-${ci}`]||''; if(st.checked) s.classList.add(s.value===a?'ok':'bad');}}));
+  if(st&&st.checked) setFb(key,st.ok?'ok':'bad',st.ok?'כל ההשוואה נכונה!':`${st.wrong} תאים לא נכונים.`);
+}
+function paintTask(key){
+  const st=S.ans[key];
+  if(st&&st.results){st.results.forEach((r,i)=>{const li=$(`t-${key}-${i}`); if(li) li.className=r?'pass':'fail';});
+    setFb(key,st.ok?'ok':'bad',st.ok?'כל הבדיקות עברו!':'חלק מהבדיקות לא עברו. תקנו והריצו שוב.');}
+  showReveal(key);
+}
+function restore(){
+  $('stuName').value=S.name||''; $('stuClass').value=S.cls||'';
+  $('teacherNote').hidden=!TEACHER;
+  for(const key in UNITS){const k=UNITS[key].kind;
+    if(k==='text')paintText(key); else if(k==='mc')paintMc(key); else if(k==='trace')paintTrace(key); else if(k==='compare')paintCompare(key); else if(k==='task')paintTask(key);}
+  document.querySelectorAll('[data-refl]').forEach(t=>t.value=S.refl[t.dataset.refl]||'');
+}
+
+/* ============ checking ============ */
+function bump(key,ok,extra){
+  const prev=S.ans[key]||{};
+  S.ans[key]=Object.assign({},prev,extra,{ok,tries:(prev.tries||0)+(ok?0:1)});
+  save();
+}
+function checkText(key){
+  const u=UNITS[key], v=$('in-'+key).value;
+  if(!v.trim()){setFb(key,'warn','כתבו תשובה קודם.');return;}
+  const res=matches(v,u.ans,u.contains);
+  bump(key,res==='ok',{v,res});
+  paintText(key);
+}
+function checkMc(key,val){
+  const u=UNITS[key]; const v=Number(val);
+  bump(key,v===u.correct,{v});
+  paintMc(key);
+}
+function checkTrace(key){
+  const u=UNITS[key], v={}; let wrong=0, empty=0;
+  for(const ck in u.cells){v[ck]=$('tc-'+ck).value; if(!v[ck].trim() && !u.cells[ck].includes('')) empty++; if(matches(v[ck],u.cells[ck])!=='ok') wrong++;}
+  if(empty===Object.keys(u.cells).length){setFb(key,'warn','מלאו את הטבלה קודם.');return;}
+  bump(key,wrong===0,{v,checked:true,wrong});
+  paintTrace(key);
+}
+function checkCompare(key){
+  const u=UNITS[key], v={}; let wrong=0;
+  u.rows.forEach((r,ri)=>r.ans.forEach((a,ci)=>{const s=$(`cs-${key}-${ri}-${ci}`).value; v[`${ri}-${ci}`]=s; if(s!==a) wrong++;}));
+  bump(key,wrong===0,{v,checked:true,wrong});
+  paintCompare(key);
+}
+
+/* ============ python runner (Skulpt) ============ */
+let busy=false;
+function runPy(code){
+  return new Promise(resolve=>{
+    if(typeof Sk==='undefined'){resolve({out:'',err:'סביבת ההרצה לא נטענה. בדקו את החיבור לאינטרנט ורעננו את הדף.'});return;}
+    let out='';
+    Sk.configure({output:t=>{out+=t;},read:x=>{if(Sk.builtinFiles===undefined||Sk.builtinFiles.files[x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles.files[x];},
+      __future__:Sk.python3,execLimit:6000,inputfunTakesPrompt:true,inputfun:()=>{out+='[בדף הזה אין קלט מהמקלדת — השתמשו בערכים קבועים]\n';return '';}});
+    Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody('<stdin>',false,code,true))
+      .then(()=>resolve({out,err:null}),e=>resolve({out,err:String(e&&e.toString?e.toString():e)}));
+  });
+}
+function showOut(key,out,err){
+  const el=$('out-'+key);
+  el.innerHTML=esc(out)+(err?`<span class="err">${esc(err)}</span>`:'');
+  if(!out && !err) el.innerHTML='<span style="color:var(--muted)">(אין פלט)</span>';
+}
+const MARK='@@TESTS@@';
+async function runEditor(key,withTests){
+  if(busy) return; busy=true;
+  const code=$('ed-'+key).value; S.code[key]=code; save();
+  const el=$('out-'+key); el.textContent='מריץ…';
+  if(!withTests){const r=await runPy(code); showOut(key,r.out,r.err); busy=false; return;}
+  const u=UNITS[key];
+  let h='\n\n'+u.pre+'\n__r = []\n';
+  for(const t of u.tests) h+=`try:\n    __r.append(bool(${t.py}))\nexcept Exception:\n    __r.append(False)\n`;
+  h+=`print('${MARK}' + ','.join([str(__x) for __x in __r]))\n`;
+  const r=await runPy(code+h);
+  let out=r.out, results=u.tests.map(()=>false);
+  const idx=out.indexOf(MARK);
+  if(idx>=0){results=out.slice(idx+MARK.length).trim().split(',').map(s=>s.trim()==='True'); out=out.slice(0,idx);}
+  showOut(key,out,r.err);
+  bump(key,!r.err && results.every(Boolean),{results});
+  paintTask(key);
+  busy=false;
+}
+
+/* ============ score + report ============ */
+function updateScore(){
+  let tot=0,ok=0; const per={};
+  PARTS.forEach(p=>per[p.id]={t:0,o:0});
+  for(const key in UNITS){const u=UNITS[key]; tot++; per[u.part].t++; if(S.ans[key]&&S.ans[key].ok){ok++; per[u.part].o++;}}
+  $('scoreNum').textContent=`${ok}/${tot}`;
+  PARTS.forEach(p=>{const el=$('pb-'+p.id); if(el) el.style.width=(per[p.id].t?100*per[p.id].o/per[p.id].t:0)+'%';});
+  BLOCKS.forEach(b=>{const d=$('done-'+b.id); if(!d) return; const keys=Object.keys(UNITS).filter(k=>k===b.id||k.startsWith(b.id+'-')); if(!keys.length) return;
+    const o=keys.filter(k=>S.ans[k]&&S.ans[k].ok).length; d.textContent=o===keys.length?'✓ הושלם':(o?`${o}/${keys.length}`:'');});
+  // report
+  const lines=[`שם: ${S.name||'—'}   כיתה: ${S.cls||'—'}`,`תאריך: ${new Date().toLocaleDateString('he-IL')}`,`ציון כולל: ${ok} מתוך ${tot} (${tot?Math.round(100*ok/tot):0}%)`,''];
+  PARTS.forEach(p=>lines.push(`${p.num} — ${p.name}: ${per[p.id].o}/${per[p.id].t}`));
+  const tasks=BLOCKS.filter(b=>b.type==='task').map(b=>`${S.ans[b.id]&&S.ans[b.id].ok?'✓':'✗'} ${b.title}`);
+  lines.push('','משימות קוד:',...tasks);
+  const refl=BLOCKS.find(b=>b.type==='reflect');
+  lines.push('','רפלקציה:');
+  refl.prompts.forEach((p,i)=>lines.push(`${i+1}. ${p}`,`   ${(S.refl[i]||'—').trim()}`));
+  const solved=BLOCKS.filter(b=>b.type==='task'&&S.code[b.id]);
+  if(solved.length){lines.push('','הקוד שלי:');solved.forEach(b=>lines.push(`--- ${b.title} ---`,S.code[b.id].trim(),''));}
+  $('reportText').textContent=lines.join('\n');
+}
+
+/* ============ events ============ */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act]'); if(!t) return;
+  const key=t.dataset.key, act=t.dataset.act;
+  if(act==='check') checkText(key);
+  else if(act==='trace') checkTrace(key);
+  else if(act==='compare') checkCompare(key);
+  else if(act==='run') runEditor(key,false);
+  else if(act==='test') runEditor(key,true);
+  else if(act==='restore'){const ed=$('ed-'+key); ed.value=STARTERS[key]; delete S.code[key]; save();}
+  else if(act==='show'){S.ans[key]=Object.assign(S.ans[key]||{},{shown:true}); save(); showReveal(key);}
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset.act==='mc') checkMc(t.dataset.key,t.value);
+});
+document.addEventListener('keydown',e=>{
+  const t=e.target;
+  if(t.matches('.ans input[type=text]') && e.key==='Enter'){e.preventDefault(); checkText(t.dataset.key);}
+  if(t.matches('textarea.editor')){
+    if(e.key==='Tab'){e.preventDefault(); const s=t.selectionStart,en=t.selectionEnd; t.value=t.value.slice(0,s)+'    '+t.value.slice(en); t.selectionStart=t.selectionEnd=s+4;}
+    if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault(); runEditor(t.dataset.key,false);}
+  }
+});
+let tmr;
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.id==='stuName'){S.name=t.value;} else if(t.id==='stuClass'){S.cls=t.value;}
+  else if(t.matches('textarea.editor')){S.code[t.dataset.key]=t.value;}
+  else if(t.dataset.refl!==undefined){S.refl[t.dataset.refl]=t.value;}
+  else if(t.id&&t.id.startsWith('tc-')){const key=t.dataset.key; S.ans[key]=S.ans[key]||{}; S.ans[key].v=S.ans[key].v||{}; S.ans[key].v[t.id.slice(3)]=t.value;}
+  else return;
+  clearTimeout(tmr); tmr=setTimeout(save,300);
+});
+$('copyReport').addEventListener('click',()=>{
+  const txt=$('reportText').textContent;
+  const fallback=()=>{const r=document.createRange(); r.selectNodeContents($('reportText')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); $('copyFb').className='fb warn'; $('copyFb').textContent='הטקסט סומן — העתיקו עם Ctrl+C.';};
+  try{navigator.clipboard.writeText(txt).then(()=>{$('copyFb').className='fb ok';$('copyFb').textContent='הועתק.';},fallback);}catch(err){fallback();}
+});
+let resetArmed=false;
+$('resetBtn').addEventListener('click',e=>{
+  if(!resetArmed){resetArmed=true; e.target.textContent='לחצו שוב לאישור המחיקה'; setTimeout(()=>{resetArmed=false; e.target.textContent='איפוס כל התשובות';},4000); return;}
+  S={ans:{},code:{},refl:{},name:'',cls:''}; save(); resetArmed=false; e.target.textContent='איפוס כל התשובות'; render();
+});
+window.addEventListener('hashchange',()=>{const t=location.hash==='#teacher'; if(t!==TEACHER){TEACHER=t; render();}});
+
+render();
+</script>
+</body>
+</html>
